@@ -286,6 +286,16 @@ body {
   color: #2d70c4;
 }
 
+.flatpickr-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+  margin-top: 10px;
+}
 /* NEW MODAL OVERLAY & MODAL STYLES */
 .modal-overlay {
   position: fixed;
@@ -770,23 +780,6 @@ th {
   
   body {
     margin: 0 25px 0 25px;
-  }
-  
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  select {
-    text-align: center;
-    -webkit-appearance: none; /* Prevents native styles interfering */
-    text-align-last: center;  /* Align selected option text in dropdown */
-  }
-  
-  .modal label {
-    text-align: center;
-  }
-  
-  .modal-overlay h3 {
-    text-align: center;
   }
 }
 
