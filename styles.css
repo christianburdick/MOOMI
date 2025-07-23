@@ -717,6 +717,14 @@ th {
   font-weight: 600;
 }
 
+tr.sortable-chosen {
+  background: #e0eaff;
+}
+
+tr.sortable-ghost {
+  opacity: 0.4;
+}
+
 .delete-btn {
   background: none;
   border: none;
