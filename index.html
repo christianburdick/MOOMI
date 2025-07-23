@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Moomi - Budget Planner</title>
-  <link rel="stylesheet" href="styles.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Chart with Legend and Toggle Button</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
 </head>
 <body>
   <div class="chart-section">
@@ -94,7 +94,7 @@
     <button id="close-float-modal" class="close-modal" title="Close">✕</button>
     <h3 class="float-title">Float Amount:</h3>
     <form id="float-form">
-      <input type="number" id="float-input" placeholder="1000" step="0.01" />
+      <input type="number" id="float-input" placeholder="$1000" step="0.01" />
       <button type="submit" id="save-float">Save</button>
     </form>
   </div>
@@ -114,6 +114,5 @@
   </div>
 
   <div id="help-button" title="How to use this app">?</div>
-  <script src="script.js"></script>
 </body>
 </html>
