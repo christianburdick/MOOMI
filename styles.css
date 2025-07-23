@@ -655,6 +655,7 @@ select {
 
 #new-bill-start-date {
   width: 100%;
+  padding-right: ;
 }
 
 .add-bill-form button {
@@ -768,7 +769,7 @@ th {
   }
   
   body {
-    margin-top: 0;
+    margin: 0 20px 0 20px;
   }
 }
 
