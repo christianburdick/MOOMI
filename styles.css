@@ -780,6 +780,14 @@ th {
     -webkit-appearance: none; /* Prevents native styles interfering */
     text-align-last: center;  /* Align selected option text in dropdown */
   }
+  
+  .modal label {
+    text-align: center;
+  }
+  
+  .modal-overlay h3 {
+    text-align: center;
+  }
 }
 
 
