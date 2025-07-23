@@ -373,7 +373,7 @@ function handleDragEnd(e) {
     // ... your existing code for creating cells ...
 
     // Create editable cell with natural input sizing and validation
-    function createEditableCell(prop, formatFn, options) {
+function createEditableCell(prop, formatFn, options) {
   const td = document.createElement('td');
   td.textContent = formatFn ? formatFn(bill[prop]) : bill[prop];
 
@@ -513,20 +513,29 @@ function handleDragEnd(e) {
       render();
     }
 
-    input.addEventListener('blur', () => finishEdit(true));
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        finishEdit(true);
-      } else if (e.key === 'Escape') {
-        finishEdit(false);
-      }
-    });
+  if (e.key === 'Enter') {
+    finishEdit(true);
+  } else if (e.key === 'Escape') {
+    finishEdit(false);
+  }
+});
+
+// ✅ Remove blur save to avoid trapping the user
+input.addEventListener('blur', () => {
+  // finishEdit(false); // optional: cancel edit on blur
+});
+
+// ✅ Remove red border once user fixes it
+input.addEventListener('input', () => {
+  input.classList.remove('input-error');
+});
   });
 
   return td;
 }
 
-    const freqOptions = ['once', 'weekly', 'biweekly', 'monthly'];
+    const freqOptions = ['once', 'weekly', 'biweekly', 'monthly', 'yearly'];
 
     const tdName = createEditableCell('name');
     const tdAmount = createEditableCell('amount', val => `$${val.toFixed(2)}`);
@@ -945,20 +954,36 @@ function proofBillsInPayPeriod() {
   periodStart = subtractFrequency(periodStart, frequency);
 
   function addFrequency(date, frequency) {
-    const d = new Date(date);
-    if (frequency === 'weekly') d.setDate(d.getDate() + 7);
-    else if (frequency === 'biweekly') d.setDate(d.getDate() + 14);
-    else if (frequency === 'monthly') d.setMonth(d.getMonth() + 1);
-    return d;
+  const d = new Date(date);
+
+  if (frequency === 'weekly') {
+    d.setDate(d.getDate() + 7);
+  } else if (frequency === 'biweekly') {
+    d.setDate(d.getDate() + 14);
+  } else if (frequency === 'monthly') {
+    d.setMonth(d.getMonth() + 1);
+  } else if (frequency === 'yearly') {
+    d.setFullYear(d.getFullYear() + 1);
   }
 
+  return d;
+}
+
   function subtractFrequency(date, frequency) {
-    const d = new Date(date);
-    if (frequency === 'weekly') d.setDate(d.getDate() - 7);
-    else if (frequency === 'biweekly') d.setDate(d.getDate() - 14);
-    else if (frequency === 'monthly') d.setMonth(d.getMonth() - 1);
-    return d;
+  const d = new Date(date);
+
+  if (frequency === 'weekly') {
+    d.setDate(d.getDate() - 7);
+  } else if (frequency === 'biweekly') {
+    d.setDate(d.getDate() - 14);
+  } else if (frequency === 'monthly') {
+    d.setMonth(d.getMonth() - 1);
+  } else if (frequency === 'yearly') {
+    d.setFullYear(d.getFullYear() - 1);
   }
+
+  return d;
+}
 
   function getBillOccurrences(billStart, frequency, start, end) {
     const occurrences = [];
@@ -1000,7 +1025,43 @@ proofBillsInPayPeriod();
 window.getCurrentPayPeriod = getPayPeriodRange;
 
 // Make getBillOccurrencesInPeriod global explicitly
-window.getBillOccurrencesInPeriod = getBillOccurrencesInPeriod;
+function getBillOccurrencesInPeriod(bill, period) {
+  const start = new Date(bill.startDate);
+  const freq = bill.frequency;
+
+  if (freq === 'once') {
+    // Single occurrence check
+    return (start >= period.start && start <= period.end) ? 1 : 0;
+  }
+
+  let occurrences = 0;
+  let date = new Date(start);
+
+  while (date <= period.end) {
+    if (date >= period.start && date <= period.end) {
+      occurrences++;
+    }
+    switch (freq) {
+      case 'weekly':
+        date.setDate(date.getDate() + 7);
+        break;
+      case 'biweekly':
+        date.setDate(date.getDate() + 14);
+        break;
+      case 'monthly':
+        date.setMonth(date.getMonth() + 1);
+        break;
+      case 'yearly':
+        date.setFullYear(date.getFullYear() + 1);
+        break;
+      default:
+        // If frequency unknown, treat as zero occurrences
+        return 0;
+    }
+  }
+
+  return occurrences;
+}
 
 // THIS IS A DEBUG CODE TO TEST IF NUMBERS ARE WORKING WITH THE BILLS AND PAY PERIOD OVERLAP
 
@@ -1015,7 +1076,6 @@ function debugBillBreakdown() {
   const frequency = localStorage.getItem('payFrequency') || 'biweekly';
   const payPeriod = getCurrentPayPeriod(payday, frequency);
 
-  // Use toISOString().slice(0,10) to get YYYY-MM-DD UTC date format
   console.log(`\n📆 PAY PERIOD: ${payPeriod.start.toISOString().slice(0,10)} → ${payPeriod.end.toISOString().slice(0,10)}`);
   console.log("------------------------------------------------------");
 
@@ -1026,17 +1086,19 @@ function debugBillBreakdown() {
     const total = occurrences * bill.amount;
     grandTotal += total;
 
-    // For bill charge dates printout, format dates in UTC as well
     const billStart = new Date(bill.startDate);
     const chargeDates = [];
+
     if (occurrences > 0) {
       let date = new Date(billStart);
       let count = 0;
+
       while (count < occurrences) {
         if (date >= payPeriod.start && date <= payPeriod.end) {
           chargeDates.push(date.toISOString().slice(0, 10));
           count++;
         }
+
         switch (bill.frequency) {
           case 'weekly':
             date.setUTCDate(date.getUTCDate() + 7);
@@ -1047,12 +1109,19 @@ function debugBillBreakdown() {
           case 'monthly':
             date.setUTCMonth(date.getUTCMonth() + 1);
             break;
+          case 'yearly': {
+            const originalDay = date.getUTCDate();
+            date.setUTCFullYear(date.getUTCFullYear() + 1);
+            if (date.getUTCDate() !== originalDay) {
+              date.setUTCDate(0); // Roll back to last day of previous month
+            }
+            break;
+          }
           case 'once':
-            // Only one occurrence; break out early
-            count++;
+            count++; // Only once
             break;
           default:
-            // unknown frequency - break loop
+            console.warn(`Unknown frequency for bill "${bill.name}": ${bill.frequency}`);
             count++;
             break;
         }
