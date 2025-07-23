@@ -780,7 +780,7 @@ th {
   }
   
   body {
-    margin: 0 25px 0 25px;
+    margin: 20px 25px 0 25px;
   }
 }
 
@@ -792,7 +792,7 @@ th {
 
   .popup-content {
     max-width: 90vw;
-    padding: 20px 15px;
+    padding: 10px 15px;
   }
 
   .popup-content h2 {
