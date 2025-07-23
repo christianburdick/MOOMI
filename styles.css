@@ -771,7 +771,17 @@ th {
   body {
     margin: 0 25px 0 25px;
   }
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    text-align: center;
+    -webkit-appearance: none; /* Prevents native styles interfering */
+    text-align-last: center;  /* Align selected option text in dropdown */
+  }
 }
+
 
 @media (max-width: 320px) {
   .popup-content .gray-text {
