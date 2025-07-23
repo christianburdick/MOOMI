@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Chart with Legend and Toggle Button</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="script.js" defer></script>
 </head>
 <body>
   <div class="chart-section">
@@ -37,7 +35,7 @@
         <input id="new-bill-name" type="text" placeholder="New bill name" required />
         <input id="new-bill-amount" type="number" min="0" step="1" placeholder="Amount" required />
         <label>
-          <select id="new-bill-frequency" required>
+          <select id="new-bill-frequency" required placeholder="How often?">
             <option value="" disabled selected>How often?</option>
             <option value="weekly">Weekly</option>
             <option value="biweekly">Biweekly</option>
