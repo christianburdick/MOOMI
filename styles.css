@@ -1,0 +1,767 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1100px;
+  min-width: 200px;
+  margin: 40px auto;
+  background: linear-gradient(-45deg, #f9f9fb, #e0eafc, #c2d8ff, #f9f9fb);
+  background-size: 400% 400%;
+  animation: gradientBackground 25s ease infinite;
+  padding: 30px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.popup-overlay.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  min-width: 200px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  margin-top: -100px;
+}
+
+.popup-content h2 {
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.popup-content p {
+  color: #4a90e2;
+}
+  
+.popup-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px auto;
+  max-width: 90%;
+}
+
+.popup-content li {
+  position: relative;
+  display: flex;
+  justify-content: center;   /* Centers the text horizontally */
+  align-items: center;     /* Makes room for the checkmark */
+  margin-bottom: 12px;
+  color: #555;
+  font-size: 1em;
+  line-height: 1.5;
+  word-wrap: break-word;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+  cursor: default;
+  text-align: center;
+}
+
+/* Checkmark appears on hover 
+.popup-content li::after {
+  content: '✓';
+  position: absolute;
+  right: 0;                
+  top: 50%;
+  transform: translateY(-50%) scale(0.8);
+  color: #4a90e2;
+  font-weight: bold;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+*/
+
+.popup-content li:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.2);
+}
+
+.popup-content li:hover {
+  color: #4a90e2;
+}
+
+.popup-content button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+#float-modal {
+  margin-top: -80px;
+}
+
+.float-title {
+  font-size: 16px;
+  text-align: left;
+  color: #333;
+  margin-bottom: 0px;
+  font-weight: normal;
+  display: block;
+  user-select: none;
+}
+
+#save-float {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+#save-float[type="submit"]:hover {
+  background: #3c78c2;
+  box-shadow: 0 4px 10px rgba(60,120,194,0.6);
+}
+
+.popup-content button:hover {
+  background: #357abd;
+}
+
+#help-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: #4a90e2;
+  color: white;
+  font-weight: bold;
+  font-size: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+#help-button:hover {
+  background-color: #357ABD;
+}
+
+.chart-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+  position: relative;
+  margin-top: 4vh;
+}
+
+/* Adjusted total-container for float button on LEFT and calendar button on RIGHT */
+.total-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+  font-weight: 100;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* Float button on LEFT inside total container */
+.total-container .float-btn {
+  position: absolute;
+  left: 6px;
+  top: 54%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  color: #5a7081;
+  cursor: pointer;
+  padding: 0 6px 2px 6px;
+  user-select: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.total-container .float-btn:hover {
+  color: #357abd;
+  transform: translateY(-50%) scale(1.2);
+}
+
+/* Dollar sign shifted right to avoid overlap with float button */
+.total-container span {
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 16px;
+  color: #555;
+  user-select: none;
+  z-index: 2;
+}
+
+/* Input with left padding for float button + dollar sign, and right padding for calendar button */
+.total-container input {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+  padding: 6px 56px 6px 56px; /* balance left and right */
+  border-radius: 6px;
+  border: 2px solid #4a90e2;
+  color: #333;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* Calendar button on RIGHT side */
+.calendar-btn {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  color: #4a90e2;
+  padding: 0;
+  margin: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+  z-index: 999;
+}
+
+.calendar-btn:hover {
+  transform: scale(1.2) rotate(5deg);
+  color: #2d70c4;
+}
+
+/* NEW MODAL OVERLAY & MODAL STYLES */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Show modal overlay when active */
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  padding: 30px 30px;
+  border-radius: 10px;
+  width: 60vw;
+  max-width: 300px;
+  min-width: 200px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  bottom: 8%;
+}
+
+.modal label {
+  font-size: 16px;
+  text-align: left;
+  color: #333;
+  margin-bottom: 20px;
+  display: block;
+  user-select: none;
+}
+
+input[type="date"],
+input[type="number"],
+select {
+  font-size: 16px;
+  padding: 10px;
+  height: 42px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  margin-top: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.modal input:focus,
+.modal select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px rgba(74,144,226,0.6);
+}
+
+.modal button[type="submit"] {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.modal button[type="submit"]:hover {
+  background: #3c78c2;
+  box-shadow: 0 4px 10px rgba(60,120,194,0.6);
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: red;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  height: 460px;
+  background: #e0e0e0;
+  border-radius: 20px;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  background: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #4a90e2;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  z-index: 10;
+  user-select: none;
+}
+
+.toggle-btn:hover {
+  color: #f5a623;
+}
+
+.legend {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 14px;
+  padding-top: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+  overflow-y: auto;
+  max-height: 200px;
+  box-sizing: border-box;
+  margin-top: 20px;
+  display: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+  font-size: 15px;
+  color: #333;
+  cursor: default;
+}
+
+.legend-color-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  margin-right: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.legend-text {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+
+.legend-value {
+  font-style: italic;
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 5px;
+  white-space: nowrap;
+  color: #555;
+}
+
+/* Inputs/selects inside bills table cells */
+#bills-tbody td input,
+#bills-tbody td select {
+  width: 0%;
+  box-sizing: border-box;
+  border: none;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: inherit;
+  background-color: #fff;
+  border-radius: 6px;
+  outline: none;
+  opacity: 0;
+  animation: fadeInInput 0.25s forwards;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Highlight on focus */
+#bills-tbody td input:focus,
+#bills-tbody td select:focus {
+  background-color: #f0f8ff;
+  box-shadow: 0 0 6px #4a90e2;
+}
+
+/* Fade-in keyframes */
+@keyframes fadeInInput {
+  to {
+    opacity: 1;
+  }
+}
+
+.segment {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.12);
+  user-select: none;
+  overflow: hidden;
+  line-height: 1.2;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease;
+  border-radius: 0;
+}
+
+.segment.first {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.segment.last {
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.segment .name {
+  font-weight: 700;
+  font-size: 18px;
+  text-shadow: 0 0 2px rgba(0,0,0,0.4);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.segment .value {
+  font-style: italic;
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 2px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 0 8px;
+}
+
+.handle {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -6px);
+  width: 30px;
+  height: 12px;
+  background: #333;
+  border-radius: 6px;
+  cursor: ns-resize;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  border: 2px solid #fff;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.collapse-container {
+  width: auto;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  text-align: center;
+  min-width: 300px
+}
+
+.collapse-toggle {
+  cursor: pointer;
+  color: #4a90e2;
+  font-weight: 600;
+  font-size: 16px;
+  user-select: none;
+  margin-bottom: 10px;
+  display: inline-block;
+  transition: color 0.3s ease;
+}
+
+.collapse-toggle:hover {
+  color: #f5a623;
+}
+
+.collapse-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: white;
+  padding: 0 10px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.collapse-content.open {
+  max-height: none;
+  max-width: 90vw;
+  min-width: 300px;
+  padding: 20px 20px 10px 20px;
+  overflow: visible;
+  opacity: 1;
+  visibility: visible;
+  margin: 0 auto;
+}
+
+.add-bill-form {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-bill-form > div {
+  margin-bottom: 14px;
+}
+
+.add-bill-form input[type="text"],
+.add-bill-form input[type="number"] {
+  padding: 10px 10px;
+  border: 1.5px solid #bbb;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-bill-form input[type="text"]:focus,
+.add-bill-form input[type="number"]:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74,144,226,0.5);
+}
+
+#new-bill-start-date {
+  width: 100%;
+}
+
+.add-bill-form button {
+  background: #4a90e2;
+  border: none;
+  color: white;
+  padding: 10px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.add-bill-form button:hover {
+  background: #3c78c2;
+  box-shadow: 0 4px 10px rgba(60,120,194,0.6);
+}
+
+/* Universal focus style for all form controls and buttons */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+   outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px rgba(74,144,226,0.6);
+}
+
+
+table {
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #ddd;
+  font-size: 15px;
+  color: #333;
+  text-align: left;
+}
+
+th {
+  background: #5a7081;
+  color: white;
+  font-weight: 600;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: .9em;
+  color: #999;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: red;
+}
+
+/* Remove number input arrows for better style */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+th {
+  white-space: nowrap;
+}
+
+/* Hide columns that won't fit on smaller screens */
+/* For example, hide 3rd column on screens below 600px */
+@media (max-width: 600px) {
+  table th:nth-child(3),
+  table td:nth-child(3) {
+    display: none;
+  }
+}
+
+/* Hide 4th column on screens below 400px */
+@media (max-width: 430px) {
+  table th:nth-child(4),
+  table td:nth-child(4) {
+    display: none;
+  }
+}
+
+@media (max-width: 320px) {
+  .popup-content .gray-text {
+    display: none;
+  }
+
+  .popup-content {
+    max-width: 90vw;
+    padding: 20px 15px;
+  }
+
+  .popup-content h2 {
+    font-size: 1.3rem;
+  }
+}

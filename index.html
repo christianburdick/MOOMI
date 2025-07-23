@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Moomi - Budget Planner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="chart-section">
+    <div class="total-container total-wrapper">
+      <button id="float-button" class="float-btn" title="Adjust float amount">$</button>
+      <input
+        id="total-input"
+        type="text"
+        inputmode="numeric"
+        pattern="\d*"
+        maxlength="11"
+        placeholder="0"
+        oninput="enforceNumeric(this); formatDollarInput(this); render();"
+      />
+      <button id="calendar-btn" class="calendar-btn" type="button" title="Set Pay Schedule">📅</button>
+    </div>
+
+    <div class="chart-container" id="chart-container">
+      <div class="toggle-btn" id="toggle-btn">%</div>
+    </div>
+
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="collapse-container">
+    <div class="collapse-toggle" id="collapse-toggle">Show Bills ▼</div>
+    <div class="collapse-content" id="collapse-content">
+      <form class="add-bill-form" id="add-bill-form">
+        <input id="new-bill-name" type="text" placeholder="New bill name" required />
+        <input id="new-bill-amount" type="number" min="0" step="1" placeholder="Amount" required />
+        <label>
+          <select id="new-bill-frequency" required>
+            <option value="" disabled selected>How often?</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Biweekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="once">One-time</option>
+          </select>
+        </label>
+
+        <label>
+          <input id="new-bill-start-date" type="date" placeholder="YYYY-MM-DD" required />
+        </label>
+
+        <button type="submit" id="add-bill-button">Submit</button>
+      </form>
+      <div class="bills-table-container">
+        <table id="bills-table">
+          <thead id="bills-thead" style="display:none;">
+            <tr>
+              <th>Bill Name</th>
+              <th>Amount</th>
+              <th>Frequency</th>
+              <th>Start Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="bills-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="pay-modal-overlay" class="modal-overlay">
+    <div id="pay-modal" class="modal">
+      <button class="close-modal" id="close-modal-btn" title="Close">×</button>
+      <form id="pay-form">
+        <label>Payday:
+          <input type="date" id="payday-input" placeholder="YYYY-MM-DD" required />
+        </label>
+        <label>Pay Frequency:
+          <select id="frequency-input" required>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Biweekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </label>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- New Float Modal -->
+  <!-- Float Amount Modal -->
+<div id="float-modal-overlay" class="modal-overlay" style="display: none;">
+  <div id="float-modal" class="modal">
+    <button id="close-float-modal" class="close-modal" title="Close">✕</button>
+    <h3 class="float-title">Float Amount:</h3>
+    <form id="float-form">
+      <input type="number" id="float-input" placeholder="1000" step="0.01" />
+      <button type="submit" id="save-float">Save</button>
+    </form>
+  </div>
+</div>
+
+  <div id="welcome-popup" class="popup-overlay">
+    <div class="popup-content">
+      <h2>Welcome to Your Budget App!</h2>
+      <ul>
+        <li>Set your payday</li>
+        <li>Add bills</li>
+        <li>Drag the chart</li>
+        <li>Tap the % / $ button</li>
+      </ul>
+      <button id="close-welcome-btn">Got it!</button>
+    </div>
+  </div>
+
+  <div id="help-button" title="How to use this app">?</div>
+  <script src="script.js"></script>
+</body>
+</html>
