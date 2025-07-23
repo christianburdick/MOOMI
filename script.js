@@ -97,7 +97,6 @@ function getTotalAmount() {
   return adjustedTotal > 0 ? adjustedTotal : 0;  // prevent negative totals
 }
 
-
 // Save bills to localStorage as JSON string
 function saveBills() {
   localStorage.setItem('bills', JSON.stringify(bills));
@@ -580,13 +579,13 @@ function onDragStart(e) {
   document.addEventListener('mousemove', onDragMove);
   document.addEventListener('mouseup', onDragEnd);
   document.addEventListener('touchmove', onDragMove, { passive: false });
-  document.addEventListener('touchend', onDragEnd);
+  document.addEventListener('touchend', onDragEnd, { passive: false });
 }
 
 function onDragMove(e) {
-  if (!isDragging) return;  // Only prevent default if dragging
+  if (!isDragging) return;
 
-  e.preventDefault();  // Prevent scrolling when dragging
+  e.preventDefault();
   e.stopPropagation();
 
   const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
@@ -621,7 +620,50 @@ function onDragMove(e) {
   categories[dragIndex].percentage = newPercentA;
   categories[dragIndex + 1].percentage = newPercentB;
 
-  render();
+  // Live update segments
+  const segA = categories[dragIndex]._seg;
+  const segB = categories[dragIndex + 1]._seg;
+  if (segA && segB) {
+    const topA = parseInt(segA.style.top, 10);
+    const heightA = Math.round(newPercentA * containerHeight);
+    const heightB = Math.round(newPercentB * containerHeight);
+
+    segA.style.height = `${heightA}px`;
+    segB.style.top = `${topA + heightA}px`;
+    segB.style.height = `${heightB}px`;
+
+    // Move the handle to the new border position
+    const handle = chartContainer.querySelector(`.handle[data-idx="${dragIndex}"]`);
+    if (handle) {
+      handle.style.top = `${topA + heightA}px`;
+    }
+    updateSmushedSegmentLabels();
+  }
+
+  // Live update label values (percent/money) in the segments
+  const total = getTotalAmount();
+  [dragIndex, dragIndex + 1].forEach(i => {
+    const seg = categories[i]._seg;
+    if (seg) {
+      const valueSpan = seg.querySelector('.value');
+      if (valueSpan) {
+        valueSpan.textContent = showMoney
+          ? `$${(categories[i].percentage * total).toFixed(2)}`
+          : `${(categories[i].percentage * 100).toFixed(1)}%`;
+      }
+    }
+  });
+
+  // Live update legend if needed
+  updateLegend(
+    categories.filter(cat => {
+      const seg = cat._seg;
+      if (!seg) return false;
+      const height = parseInt(seg.style.height, 10);
+      return height < 60;
+    }),
+    getTotalAmount()
+  );
 }
 
 function onDragEnd(e) {
@@ -631,18 +673,41 @@ function onDragEnd(e) {
   document.removeEventListener('mouseup', onDragEnd);
   document.removeEventListener('touchmove', onDragMove);
   document.removeEventListener('touchend', onDragEnd);
-  render();
 }
 
-function updateLegendWhileDragging() {
-  const smallSegments = categories.filter(cat => {
+function updateSmushedSegmentLabels() {
+  const chartContainer = document.getElementById('chart-container');
+  const containerHeight = chartContainer ? chartContainer.offsetHeight : 400;
+
+  // Match this with actual visual cutoff of your labels (adjust if needed)
+  const threshold = 60; // previously was 24 or containerHeight * 0.12
+
+  const hiddenSegments = [];
+
+  categories.forEach(cat => {
     const seg = cat._seg;
-    if (!seg) return false;
+    if (!seg) return;
+
     const height = parseInt(seg.style.height, 10);
-    return height < 40 && cat.name !== 'Bills';
+    const nameSpan = seg.querySelector('.name');
+    const valueSpan = seg.querySelector('.value');
+
+    const shouldHide = height < threshold;
+
+    if (nameSpan) {
+      nameSpan.style.display = shouldHide ? 'none' : 'block';
+    }
+    if (valueSpan) {
+      valueSpan.style.display = shouldHide ? 'none' : 'block';
+    }
+
+    if (shouldHide) {
+      hiddenSegments.push(cat);
+    }
   });
-  const total = getTotalAmount() || 1000;
-  updateLegend(smallSegments, total);
+
+  // 💡 This ensures the legend always shows exactly what is hidden
+  updateLegend(hiddenSegments, getTotalAmount());
 }
 
 totalInput.addEventListener('input', () => {
@@ -1003,3 +1068,4 @@ function debugBillBreakdown() {
   console.log("------------------------------------------------------");
   console.log(`💰 GRAND TOTAL: $${grandTotal.toFixed(2)}\n`);
 }
+
