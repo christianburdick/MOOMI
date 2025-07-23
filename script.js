@@ -119,6 +119,7 @@ function render() {
   // Remove all existing segments and handles except toggle button
   [...chartContainer.children].forEach(child => {
     if (child !== toggleBtn) child.remove();
+    enableSortable();
   });
 
   let total = getTotalAmount();
@@ -145,7 +146,7 @@ function render() {
     // Clear categories percentages
     categories.forEach(cat => (cat.percentage = 0));
 
-    // Hide bills table header and existing bills title
+    // Hide bills [table] header and existing bills title
     billsThead.style.display = 'none';
     if (existingBillsTitle) existingBillsTitle.style.display = 'none';
 
@@ -1138,3 +1139,24 @@ function debugBillBreakdown() {
   console.log(`💰 GRAND TOTAL: $${grandTotal.toFixed(2)}\n`);
 }
 
+function enableSortable() {
+  const tbody = document.getElementById('bills-tbody');
+  if (!tbody) return;
+
+  Sortable.create(tbody, {
+    animation: 150,
+    onEnd: function () {
+      const savedBills = JSON.parse(localStorage.getItem('bills')) || [];
+      const newOrder = [];
+
+      tbody.querySelectorAll('tr').forEach(row => {
+        const billId = row.dataset.id;
+        const matched = savedBills.find(b => b.id === billId);
+        if (matched) newOrder.push(matched);
+      });
+
+      localStorage.setItem('bills', JSON.stringify(newOrder));
+      render(); // re-render to reflect new order
+    }
+  });
+}
