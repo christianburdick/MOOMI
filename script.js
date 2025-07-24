@@ -188,29 +188,26 @@ function render() {
     seg.innerHTML = '';
 
     // Show label only if height >= 50 for all categories including Bills
-    if (height >= 50 && total > 0) {
-      const titleSpan = document.createElement('span');
-      titleSpan.className = 'name';
-      titleSpan.textContent = cat.name;
+  const titleSpan = document.createElement('span');
+   titleSpan.className = 'name';
+   titleSpan.textContent = cat.name;
 
-      const valueSpan = document.createElement('span');
-      valueSpan.className = 'value';
+  const valueSpan = document.createElement('span');
+   valueSpan.className = 'value';
+    valueSpan.textContent = showMoney
+  ? `$${(cat.percentage * total).toFixed(2)}`
+  : `${(cat.percentage * 100).toFixed(1)}%`;
 
-      if (showMoney) {
-      valueSpan.textContent = `$${(cat.percentage * total).toFixed(2)}`;  // two decimals
-      } else {
-      valueSpan.textContent = `${(cat.percentage * 100).toFixed(1)}%`;
-    }
+  seg.appendChild(titleSpan);
+  seg.appendChild(valueSpan);
 
 
-      seg.appendChild(titleSpan);
-      seg.appendChild(valueSpan);
-    }
-
-    chartContainer.appendChild(seg);
+  chartContainer.appendChild(seg);
     cat._seg = seg;
     currentTop += height;
   });
+  
+  updateSmushedSegmentLabels(); // ✅ Now this will work reliably
 
   // ======= UPDATED: Only add handles if Bills don't fill the entire chart =======
   if (categories[0].percentage < 1) {
