@@ -36,7 +36,7 @@
     <div class="collapse-content" id="collapse-content">
       <form class="add-bill-form" id="add-bill-form">
         <input id="new-bill-name" type="text" placeholder="New bill name" required />
-        <input id="new-bill-amount" type="number" min="0" step="1" placeholder="Amount" required />
+        <input id="new-bill-amount" type="number" min="0" step="0.01" pattern="^\d+(\.\d{1,2})?$" placeholder="Amount" required />
         <label>
           <select id="new-bill-frequency" required placeholder="How often?">
             <option value="" disabled selected>How often?</option>
