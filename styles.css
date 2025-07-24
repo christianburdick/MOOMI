@@ -432,6 +432,11 @@ select {
   color: #f5a623;
 }
 
+.toggle-symbol.dollar {
+  position: relative;
+  top: -1px;
+}
+
 .legend {
   width: 100%;
   max-width: 300px;
