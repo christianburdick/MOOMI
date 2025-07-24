@@ -41,41 +41,6 @@ frequencyInput.value = 'biweekly'; // default or '' for blank
 
 let showMoney = false;
 
-function getBillOccurrencesInPeriod(bill, period) {
-  const start = new Date(bill.startDate);
-  const freq = bill.frequency;
-
-  if (freq === 'once') {
-    // Single occurrence check
-    return (start >= period.start && start <= period.end) ? 1 : 0;
-  }
-
-  let occurrences = 0;
-  let date = new Date(start);
-
-  while (date <= period.end) {
-    if (date >= period.start && date <= period.end) {
-      occurrences++;
-    }
-    switch (freq) {
-      case 'weekly':
-        date.setDate(date.getDate() + 7);
-        break;
-      case 'biweekly':
-        date.setDate(date.getDate() + 14);
-        break;
-      case 'monthly':
-        date.setMonth(date.getMonth() + 1);
-        break;
-      default:
-        // If frequency unknown, treat as zero occurrences
-        return 0;
-    }
-  }
-
-  return occurrences;
-}
-
 function enforceNumeric(input) {
   input.value = input.value.replace(/[^\d]/g, '');
 }
@@ -119,7 +84,6 @@ function render() {
   // Remove all existing segments and handles except toggle button
   [...chartContainer.children].forEach(child => {
     if (child !== toggleBtn) child.remove();
-    enableSortable();
   });
 
   let total = getTotalAmount();
@@ -316,8 +280,7 @@ function renderBillsTable() {
 
   bills.forEach((bill, idx) => {
     const tr = document.createElement('tr');
-    tr.draggable = true;
-    tr.dataset.idx = idx;
+    tr.dataset.id = bill.id;
     tr.addEventListener('dragstart', handleDragStart);
     tr.addEventListener('dragover', handleDragOver);
     tr.addEventListener('drop', handleDrop);
@@ -921,6 +884,12 @@ floatForm.addEventListener('submit', e => {
     return;
   }
 
+  if (name && !isNaN(amount) && amount >= 0 && frequency && startDate) {
+  bills.push({ id: Date.now().toString(), name, amount, frequency, startDate });
+  saveBills();
+
+  }
+
   // Save data to localStorage or a variable
   localStorage.setItem('floatData', data);
 
@@ -1137,26 +1106,4 @@ function debugBillBreakdown() {
 
   console.log("------------------------------------------------------");
   console.log(`💰 GRAND TOTAL: $${grandTotal.toFixed(2)}\n`);
-}
-
-function enableSortable() {
-  const tbody = document.getElementById('bills-tbody');
-  if (!tbody) return;
-
-  Sortable.create(tbody, {
-    animation: 150,
-    onEnd: function () {
-      const savedBills = JSON.parse(localStorage.getItem('bills')) || [];
-      const newOrder = [];
-
-      tbody.querySelectorAll('tr').forEach(row => {
-        const billId = row.dataset.id;
-        const matched = savedBills.find(b => b.id === billId);
-        if (matched) newOrder.push(matched);
-      });
-
-      localStorage.setItem('bills', JSON.stringify(newOrder));
-      render(); // re-render to reflect new order
-    }
-  });
 }
