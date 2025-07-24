@@ -569,7 +569,7 @@ select {
 .handle {
   position: absolute;
   left: 50%;
-  transform: translate(-50%, -6px);
+  transform: translate(-50%, -7.8px);
   width: 30px;
   height: 12px;
   background: #333;
