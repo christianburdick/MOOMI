@@ -688,7 +688,10 @@ totalInput.addEventListener('input', () => {
 
 toggleBtn.addEventListener('click', () => {
   showMoney = !showMoney;
-  toggleBtn.textContent = showMoney ? '$' : '%';
+  toggleBtn.innerHTML = showMoney ? '<span class="toggle-symbol dollar">$</span>' 
+                                 : '<span class="toggle-symbol percent">%</span>';
+
+
   render();
 });
 
